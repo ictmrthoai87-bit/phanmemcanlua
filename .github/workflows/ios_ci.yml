@@ -1,0 +1,24 @@
+name: Can Lua Pro - iOS Simulator CI
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ios-simulator:
+    runs-on: macos-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.7'
+          channel: stable
+          cache: true
+      - name: Build for iOS Simulator (unsigned)
+        run: bash scripts/build_ios_macos.sh --simulator
+      - name: Upload unsigned SIMULATOR-ONLY bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: CAN_LUA_PRO_iOS_SIMULATOR_ONLY
+          path: output/CAN_LUA_PRO_iOS_SIMULATOR_ONLY.zip
+          retention-days: 14

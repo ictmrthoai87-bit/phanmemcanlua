@@ -1,0 +1,9 @@
+CAN LUA PRO V0.6.2
+- Mot nut LUU LUOT CAN sat o nhap kg; phan nhap dat o dau man hinh.
+- Khong con nut luu phu trong o nhap kg.
+- Cau hinh don gia, so le, tru bi, kg/bao gom vao tab CAU HINH.
+- Neu tru bi theo dau bao, so bao luot van nhap trong man CAN NHANH.
+- Bao cao, danh sach can, sao luu/khôi phuc duoc giu nguyen.
+- Khong co AI/quet can/camera.
+- Khong doi database schema: nang cap giu du lieu cu.
+- Nguon chung Android va iOS; can build tren Windows va macOS tuong ung.

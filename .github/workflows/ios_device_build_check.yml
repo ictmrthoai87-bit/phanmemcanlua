@@ -1,0 +1,27 @@
+name: Cân Lúa Pro iOS device build (unsigned verification)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-ios-device-build:
+    runs-on: macos-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.7'
+          channel: stable
+          cache: true
+      - name: Flutter iOS code checks
+        run: |
+          flutter pub get
+          flutter analyze --fatal-infos
+          flutter test
+      - name: Initialize iOS native project
+        run: |
+          flutter create --platforms=ios --org vn.canlua --project-name lua_can_pro .
+          python3 scripts/configure_ios_native.py
+      - name: Build unsigned device app (NOT an installable IPA)
+        run: flutter build ios --release --no-codesign
