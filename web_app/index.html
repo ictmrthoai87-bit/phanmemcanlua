@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="vi"><head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#176044"><meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Cân Lúa Pro">
+  <meta name="description" content="Cân lúa nhanh, trừ bì, đếm số bao, tính tiền. Không cần tài khoản, làm việc ngoại tuyến.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'">
+  <link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="icon" type="image/png" href="./icons/icon-192.png"><link rel="stylesheet" href="./styles.css">
+  <title>CÂN LÚA PRO V0.7.2</title>
+</head><body>
+<div id="app">
+ <header class="header"><div class="brand"><div class="logo" aria-hidden="true">🌾</div><div><h1>CÂN LÚA <span>PRO</span></h1><small>V0.7.2 • Edit: Lê Ngọc Thoại</small></div></div><button class="icon-button" id="quick-config" type="button" title="Cấu hình">⚙</button></header>
+ <main>
+  <section class="lotbar" aria-label="Lô lúa hiện tại"><div class="lottext"><label for="lot-picker">ĐANG CÂN CHO LÔ</label><select id="lot-picker" aria-label="Chọn lô cân"></select></div><button id="add-lot" class="round-plus" type="button" title="Tạo lô mới">＋</button></section>
+  <nav class="tabs" aria-label="Các chức năng"><button class="tab active" data-tab="can" type="button">⚖ Cân nhanh</button><button class="tab" data-tab="so" type="button">☷ Sổ cân</button><button class="tab" data-tab="bao-cao" type="button">▤ Báo cáo</button><button class="tab" data-tab="cau-hinh" type="button">⚙ Cấu hình</button></nav>
+  <section class="tabpage" id="page-can">
+   <article class="card entry-card" aria-label="Cân nhanh">
+    <div class="entry-heading"><div><span class="eyebrow">CÂN NHANH • 1 LƯỢT = 1 BAO</span><h2>NHẬP SỐ CÂN</h2></div><button id="exit-fast" class="exit-fast" type="button">Xong</button></div>
+    <form id="weight-form" novalidate>
+     <label for="weight-input" class="field-label strong-label">Số kg trên cân</label>
+     <div class="weightbox"><input type="text" id="weight-input" placeholder="0,0" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" maxlength="11" required aria-label="Nhập số kg của một bao"><strong>kg</strong></div>
+     <button class="primary save-button" id="save-entry" type="submit"><span id="save-label">✓ LƯU LƯỢT CÂN</span></button>
+     <span id="entry-status" class="entry-status" aria-live="polite">Nhập kg → Lưu → Nhập bao tiếp theo</span>
+     <details class="note-details"><summary>＋ Ghi chú lượt cân (không bắt buộc)</summary><textarea id="note-input" maxlength="500" rows="2" placeholder="Ghi chú"></textarea></details>
+    </form>
+    <div class="live-panel" aria-label="Thông tin cân ngay trên màn hình">
+     <div class="prev-row"><div><span>BAO VỪA LƯU <button type="button" id="edit-last" class="quick-edit" title="Sửa lượt vừa cân" hidden>Sửa</button></span><strong id="last-weight">—</strong></div><div><span>BAO TRƯỚC ĐÓ</span><strong id="prior-weight">—</strong></div></div>
+     <div class="live-total"><div><span>TỔNG KG ĐÃ CÂN</span><div class="live-kg"><strong id="live-gross">0</strong><b>kg</b></div></div><div class="live-bags"><span>TỔNG SỐ BAO</span><strong id="live-bag-count">0</strong></div></div>
+     <div class="live-money"><span>TIỀN LÚA (CHƯA TRỪ BÌ)</span><strong id="live-money">Chưa nhập đơn giá</strong></div>
+    </div>
+   </article>
+   <article class="card detailed-summary"><div class="section-heading"><h2>TỔNG KẾT LÔ LÚA</h2><button class="link-btn" data-goto="cau-hinh" type="button">Cài đặt →</button></div>
+    <div class="summary-item"><span>Tổng số lượt / bao</span><strong id="home-count">0</strong></div>
+    <div class="summary-item"><span>Tổng khối lượng</span><strong id="home-gross">0 kg</strong></div>
+    <div class="summary-item"><span>Đơn giá</span><strong id="home-price">Chưa đặt</strong></div>
+    <div class="summary-item amount-emphasis"><span>Tiền lúa trước bì</span><strong id="home-amount">—</strong></div>
+    <div class="summary-item" id="settlement-preview" hidden><span>Thanh toán sau trừ bì</span><strong id="home-settled">—</strong></div>
+   </article>
+   <article class="card latest-list"><div class="section-heading"><h2>CÂN GẦN ĐÂY</h2><button class="link-btn" data-goto="so" type="button">Xem tất cả →</button></div><div id="recent-list" class="rows"></div></article>
+  </section>
+  <section class="tabpage hidden" id="page-so"><article class="card"><div class="section-heading"><h2>DANH SÁCH LƯỢT CÂN</h2><strong id="entry-count-badge" class="chip">0 lượt</strong></div><p class="muted">Lượt mới nhất hiện trước. Có thể sửa hoặc xóa lượt nhập nhầm.</p><div id="full-list" class="rows"></div></article></section>
+  <section class="tabpage hidden" id="page-bao-cao"><article class="card"><h2>BÁO CÁO LÔ LÚA</h2><div id="report-body"></div><div class="actions"><button class="secondary" id="share-report" type="button">↗ Chia sẻ phiếu</button><button class="secondary" id="export-csv" type="button">↓ Xuất Excel (CSV)</button></div><p class="muted">Dữ liệu chỉ lưu trên thiết bị này. Hãy sao lưu thường xuyên.</p></article></section>
+  <section class="tabpage hidden" id="page-cau-hinh"><article class="card"><h2>CẤU HÌNH LÔ CÂN</h2><p class="muted">Các thông số được cất tại đây để màn hình cân không bị rối.</p><form id="settings-form" novalidate>
+    <label class="field-label" for="lot-name">Tên lô lúa</label><input class="input" id="lot-name" maxlength="120" required>
+    <label class="field-label" for="customer">Tên nông dân / khách hàng</label><input class="input" id="customer" maxlength="150">
+    <label class="field-label" for="rice">Giống lúa</label><input class="input" id="rice" maxlength="150">
+    <div class="grid-2"><div><label class="field-label" for="price">Đơn giá (đ/kg)</label><input class="input" id="price" type="number" min="0" max="10000000" step="1" inputmode="numeric"></div><div><label class="field-label" for="decimals">Số chữ số lẻ</label><select class="input" id="decimals"><option value="1">1 số lẻ</option><option value="2">2 số lẻ</option></select></div></div>
+    <details class="settlement-details"><summary><strong>TRỪ BÌ KHI THỎA THUẬN XONG</strong><small>Không bắt buộc • Để 0 nếu chưa trừ</small></summary>
+    <label class="field-label" for="tare-mode">Cách trừ bì (kg)</label><select class="input" id="tare-mode"><option value="per_bag">Theo đầu bao (từng lượt)</option><option value="after">Trừ sau khi cộng tổng</option></select>
+    <div id="per-bag-settings"><label class="field-label" for="tare-per-bag">Bì mỗi bao (kg)</label><input class="input" id="tare-per-bag" inputmode="decimal" placeholder="0,5"></div>
+    <div id="final-tare-settings"><label class="field-label" for="final-tare">Tổng bì trừ cuối (kg)</label><input class="input" id="final-tare" inputmode="decimal" placeholder="0"></div>
+    <p class="muted">Bì là số kg trừ vào tổng cân, không phải khoản tiền bao bì riêng.</p></details>
+    <label class="field-label" for="bags-per-entry">Số bao cho mỗi lượt cân (mặc định 1)</label><input class="input" id="bags-per-entry" type="number" min="1" max="1000" step="1" inputmode="numeric" value="1"><p class="muted">Thông thường để 1. Không quy đổi 50 kg/bao; chỉ đổi nếu một lượt thực sự cân nhiều bao. Các lượt cũ không bị thay đổi.</p>
+    <label class="field-label" for="paid">Tiền đã trả (đ)</label><input class="input" id="paid" type="number" min="0" step="1" inputmode="numeric">
+    <p class="muted" id="tare-lock-hint"></p><button class="primary" type="submit">✓ LƯU CẤU HÌNH</button>
+   </form></article><article class="card"><h2>DỮ LIỆU & SAO LƯU</h2><div class="actions"><button id="backup-json" class="secondary" type="button">↓ Sao lưu JSON</button><button id="restore-json" class="secondary" type="button">↑ Khôi phục JSON</button><input id="restore-file" type="file" accept=".json,application/json" hidden></div><p class="muted warning">Khôi phục sẽ thay thế toàn bộ dữ liệu PWA trên máy này. Không tự đồng bộ với bản APK Android trước đây.</p></article><article class="card"><h2>GIỚI THIỆU</h2><p><strong>CÂN LÚA PRO V0.7.2</strong><br>Edit: Lê Ngọc Thoại</p><p class="muted">Bản PWA chạy trên iPhone và Android. Không cần Apple Developer, không yêu cầu tạo tài khoản.</p><button id="delete-lot" class="danger" type="button">Xóa lô hiện tại</button></article></section>
+ </main>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<dialog id="lot-dialog"><form id="lot-form" method="dialog"><h2>TẠO LÔ CÂN MỚI</h2><label class="field-label" for="new-lot-name">Tên lô</label><input class="input" id="new-lot-name" maxlength="120" placeholder="Ví dụ: Lô ngày 10/10" required><div class="actions"><button type="button" class="secondary" id="cancel-lot">Hủy</button><button class="primary" type="submit" id="confirm-lot">Tạo lô</button></div></form></dialog>
+<dialog id="edit-dialog"><form id="edit-form" method="dialog"><h2>SỬA LƯỢT CÂN</h2><label class="field-label" for="edit-weight">Số kg</label><input class="input" id="edit-weight" inputmode="decimal" required><label class="field-label" for="edit-note">Ghi chú</label><textarea id="edit-note" maxlength="500"></textarea><div class="actions"><button class="secondary" type="button" id="cancel-edit">Hủy</button><button class="primary" type="submit">✓ Lưu thay đổi</button></div></form></dialog>
+<script type="module" src="./app.mjs"></script></body></html>
